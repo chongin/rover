@@ -1,20 +1,18 @@
 #include "motor_control.h"
-#include <Arduino.h>
 
-
-  // Motor A connections
-  int enA = 9;
-  int in1 = 12;
-  int in2 = 13;
-  // Motor B connections
-  int enB = 6;
-  int in3 = 8;
-  int in4 = 7;
 
 MotorControl::MotorControl()
 {
-  SetLeftSpeed(100);
-  SetRightSpeed(100);
+  InitMotor();
+  SetSpeed(100);
+}
+
+MotoInfo MotorControl::GetMotoInfo()
+{
+  MotoInfo info;
+  info.left_speed = _left_speed;
+  info.right_speed = _right_speed;
+  return info;
 }
 
 void MotorControl::InitMotor()
@@ -32,13 +30,31 @@ void MotorControl::InitMotor()
   digitalWrite(in3, LOW);
   digitalWrite(in4, LOW);
 }
+
+void MotorControl::SetSpeed(int speed)
+{
+  SetLeftSpeed(speed);
+  SetRightSpeed(speed);
+}
+
+void MotorControl::IncreaseSpeed()
+{
+  IncreaseLeftSpeed();
+  IncreaseRightSpeed();
+}
+  
+void MotorControl::DecreaseSpeed()
+{
+  DecreaseLeftSpeed();
+  DecreaseRightSpeed();
+}
   
 void MotorControl::SetLeftSpeed(int speed)
 {
   if (speed > 0 && speed < 256)
   {
     _left_speed = speed;
-    analogWrite(enA, speed);
+    analogWrite(enB, speed);
 
     Serial.print("Set Left speed:");
     Serial.println(_left_speed);
@@ -51,7 +67,7 @@ void MotorControl::SetRightSpeed(int speed)
   if (speed > 0 && speed < 256)
   {
      _right_speed = speed;
-    analogWrite(enB, speed);
+    analogWrite(enA, speed);
 
     Serial.print("Set Right speed:");
     Serial.println(_right_speed);
@@ -89,14 +105,6 @@ void MotorControl::ForwardLeft()
   Serial.println("Forward Left");
 }
 
-void MotorControl::ForwardRight()
-{
-  digitalWrite(in1, LOW);
-  digitalWrite(in2, HIGH);
- 
-  Serial.println("Forward Right");
-}
-
 void MotorControl::BackwardLeft()
 {
   digitalWrite(in3, HIGH);
@@ -105,8 +113,21 @@ void MotorControl::BackwardLeft()
   Serial.println("Backward Left");
 }
 
-void MotorControl::BackwardRight()
+void MotorControl::ForwardRight()
 {
+
+   analogWrite(enA, 255);
+
+  digitalWrite(in1, LOW);
+  digitalWrite(in2, HIGH);
+ 
+  Serial.println("Forward Right");
+}
+
+void MotorControl::BackwardRight()
+{ 
+ // analogWrite(enA, 255);
+
   digitalWrite(in1, HIGH);
   digitalWrite(in2, LOW);
   

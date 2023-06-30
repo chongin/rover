@@ -1,7 +1,8 @@
 #pragma once
 #include <Servo.h>
+#include <Arduino.h>
 
-#define servoPin 5
+#define servoPin 10
 
 class ServoControl
 {
@@ -9,7 +10,8 @@ public:
   ServoControl()
   {
      myservo.attach(servoPin);
-     _angle = 0;
+     _angle = 90;
+     myservo.write(_angle);
   }
 
   void SetServoAngle(int angle)
@@ -23,6 +25,11 @@ public:
       Serial.println(_angle);
     }
   
+  }
+
+  int GetAngle()
+  {
+    return _angle;
   }
 
   void TurnLeft()
