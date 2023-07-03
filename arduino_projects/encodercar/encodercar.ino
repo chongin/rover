@@ -9,14 +9,9 @@ ros::NodeHandle* nh;
 MotorControl* moto_control;
 ServoControl* servo_control;
 
-bool sendflag = false;
 std_msgs::String carInfoMsg;
-
 ros::Publisher pub("car_info", &carInfoMsg);
 
-const int MAX_STRINGS = 2; // Maximum number of strings to store
-String strings[MAX_STRINGS]; // Array to store strings
-int numStrings = 0; // Number of strings currently stored
 
 void AddMessage(String* command, MotoInfo motoInfo, int angle)
 {
@@ -86,7 +81,7 @@ void loop()
 //  ctrlMsg.data = "down";
 //  controlMessageCb(ctrlMsg);
 //  delay(2000);
-  //test_car();
+//  test_car();
   //test_servo();
   delay(50);
 }
@@ -106,34 +101,41 @@ void test_car()
 //  for (int i = 0; i < 256; i++ )
 //  {
 //    moto_control->SetLeftSpeed(i);
-//    moto_control->BackwardLeft();
+//    moto_control->ForwardLeft();
+//    Serial.println(moto_control->GetMotoInfo().left_speed);
 //    delay(30);
 //  }
-//  
+//
+//  delay(2000);
 //  moto_control->TurnOffLeft();
 //  delay(2000);
 
 //  for (int i = 0; i < 256; i++ )
 //  {
 //    moto_control->SetRightSpeed(i);
-//    moto_control->BackwardRight();
+//    moto_control->ForwardRight();
+//    Serial.println(moto_control->GetMotoInfo().right_speed);
 //    delay(30);
 //  }
-  
+//
+//   delay(2000);
+//   moto_control->TurnOffRight();
+//   delay(2000);
+   
   //moto_control->SetRightSpeed(255);
   //moto_control->BackwardRight();
   //delay(2000);
 //  moto_control->TurnOffRight();
 //  delay(1000);
 //
-  moto_control->Forward();
-  delay(2000);
-  moto_control->TurnOffAll();
-  delay(1000);
-  moto_control->Backward();
-  delay(2000);
-  moto_control->TurnOffAll();
-  delay(1000);
+//  moto_control->Forward();
+//  delay(2000);
+//  moto_control->TurnOffAll();
+//  delay(1000);
+//  moto_control->Backward();
+//  delay(2000);
+//  moto_control->TurnOffAll();
+//  delay(1000);
 }
 
 void test_servo()
@@ -154,11 +156,4 @@ void test_servo()
   }
   Serial.println("Decrease completed.");
   delay(1000);
-}
-
-void addString(String newString) {
-  if (numStrings < MAX_STRINGS) {
-    strings[numStrings] = newString;
-    numStrings++;
-  }
 }

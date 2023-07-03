@@ -66,7 +66,7 @@ void MotorControl::SetRightSpeed(int speed)
 {
   if (speed > 0 && speed < 256)
   {
-     _right_speed = speed;
+    _right_speed = speed;
     analogWrite(enA, speed);
 
     Serial.print("Set Right speed:");
@@ -115,9 +115,6 @@ void MotorControl::BackwardLeft()
 
 void MotorControl::ForwardRight()
 {
-
-   analogWrite(enA, 255);
-
   digitalWrite(in1, LOW);
   digitalWrite(in2, HIGH);
  
@@ -126,8 +123,6 @@ void MotorControl::ForwardRight()
 
 void MotorControl::BackwardRight()
 { 
- // analogWrite(enA, 255);
-
   digitalWrite(in1, HIGH);
   digitalWrite(in2, LOW);
   

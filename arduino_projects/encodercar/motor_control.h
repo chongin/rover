@@ -49,11 +49,11 @@ private:
   int _left_speed;
   int _right_speed;
     // Motor A connections
-  int enA = 5;
+  int enA = 6;
   int in1 = 12;
   int in2 = 13;
   // Motor B connections
-  int enB = 6;
+  int enB = 5;
   int in3 = 8;
   int in4 = 7;
 };
