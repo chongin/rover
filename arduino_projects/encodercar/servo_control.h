@@ -4,13 +4,15 @@
 
 #define servoPin 10
 
+const int DEFAULT_ANGLE = 100;
+const int ANGLE_STEP = 2;
 class ServoControl
 {
 public:
   ServoControl()
   {
      myservo.attach(servoPin);
-     _angle = 90;
+     _angle = DEFAULT_ANGLE;
      myservo.write(_angle);
   }
 
@@ -24,9 +26,14 @@ public:
       Serial.print("Angle:");
       Serial.println(_angle);
     }
-  
   }
 
+  void ResetAngle()
+  {
+     _angle = DEFAULT_ANGLE;
+     myservo.write(_angle);
+  }
+  
   int GetAngle()
   {
     return _angle;
@@ -46,7 +53,7 @@ public:
   {
     if (_angle < 180)
     {
-      _angle += 1;
+      _angle += ANGLE_STEP;
       SetServoAngle(_angle);
     }
   }
@@ -55,7 +62,7 @@ public:
   {
     if (_angle > 0) 
     {
-       _angle -= 1;
+       _angle -= ANGLE_STEP;
        SetServoAngle(_angle);
     }
   }

@@ -1,10 +1,16 @@
 #include "motor_control.h"
 
-
+const int DEFAULT_SPEED = 150;
+const int MIN_SPEED = 50;
 MotorControl::MotorControl()
 {
   InitMotor();
-  SetSpeed(100);
+  ResetSpeed();
+}
+
+void MotorControl::ResetSpeed()
+{
+  SetSpeed(DEFAULT_SPEED);
 }
 
 MotoInfo MotorControl::GetMotoInfo()
@@ -51,7 +57,7 @@ void MotorControl::DecreaseSpeed()
   
 void MotorControl::SetLeftSpeed(int speed)
 {
-  if (speed > 0 && speed < 256)
+  if (speed > MIN_SPEED && speed < 256)
   {
     _left_speed = speed;
     analogWrite(enB, speed);
@@ -64,7 +70,7 @@ void MotorControl::SetLeftSpeed(int speed)
 
 void MotorControl::SetRightSpeed(int speed)
 {
-  if (speed > 0 && speed < 256)
+  if (speed > MIN_SPEED && speed < 256)
   {
     _right_speed = speed;
     analogWrite(enA, speed);

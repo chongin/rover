@@ -43,6 +43,8 @@ public:
   void DecreaseRightSpeed();
  
   MotoInfo GetMotoInfo();
+
+  void ResetSpeed();
 private:
   void InitMotor();
 

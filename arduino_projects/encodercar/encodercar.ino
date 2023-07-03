@@ -46,6 +46,12 @@ void controlMessageCb( const std_msgs::String& ctrlMsg){
   {
     moto_control->DecreaseSpeed();
   }
+  else if (data == "reset")
+  {
+    moto_control->ResetSpeed();
+    servo_control->ResetAngle();
+    
+  }
   else{
     Serial.print("Didn't recognize this command:");
     Serial.println(data);
