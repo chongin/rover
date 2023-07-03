@@ -9,21 +9,20 @@ ros::NodeHandle* nh;
 MotorControl* moto_control;
 ServoControl* servo_control;
 
+bool sendflag = false;
 std_msgs::String carInfoMsg;
 
 ros::Publisher pub("car_info", &carInfoMsg);
 
-void PublishMessage(String command, MotoInfo motoInfo, int angle)
+const int MAX_STRINGS = 2; // Maximum number of strings to store
+String strings[MAX_STRINGS]; // Array to store strings
+int numStrings = 0; // Number of strings currently stored
+
+void AddMessage(String* command, MotoInfo motoInfo, int angle)
 {
-  char buffer[100];
-
-  // Use sprintf to format the string with the values
-  sprintf(buffer, "Command: %s, LS: %d, RS: %d, Ang: %d", command.c_str(),
-   motoInfo.left_speed, motoInfo.right_speed, angle);
-
-  carInfoMsg.data = buffer;
-  Serial.println(carInfoMsg.data);
-  pub.publish(&carInfoMsg);
+   String dd = *command + "," + String(motoInfo.left_speed) + "," + String(motoInfo.right_speed) + "," + String(servo_control->GetAngle());
+   carInfoMsg.data = dd.c_str();
+   pub.publish(&carInfoMsg);
 }
 
 void controlMessageCb( const std_msgs::String& ctrlMsg){
@@ -57,7 +56,7 @@ void controlMessageCb( const std_msgs::String& ctrlMsg){
     Serial.println(data);
   }
 
-  //PublishMessage(data, moto_control->GetMotoInfo(), servo_control->GetAngle());
+  AddMessage(&data, moto_control->GetMotoInfo(), servo_control->GetAngle());
 }
 
 ros::Subscriber<std_msgs::String> sub("drive_car", controlMessageCb);
@@ -79,6 +78,7 @@ void setup()
 void loop() 
 {
   nh->spinOnce();
+ 
 //  std_msgs::String ctrlMsg;
 //  ctrlMsg.data = "up";
 //  controlMessageCb(ctrlMsg);
@@ -86,12 +86,12 @@ void loop()
 //  ctrlMsg.data = "down";
 //  controlMessageCb(ctrlMsg);
 //  delay(2000);
-  //test_card();
+  //test_car();
   //test_servo();
-  delay(500);
+  delay(50);
 }
 
-void test_card()
+void test_car()
 {
 //  for (int i = 0; i < 256; i++ )
 //  {
@@ -154,4 +154,11 @@ void test_servo()
   }
   Serial.println("Decrease completed.");
   delay(1000);
+}
+
+void addString(String newString) {
+  if (numStrings < MAX_STRINGS) {
+    strings[numStrings] = newString;
+    numStrings++;
+  }
 }
