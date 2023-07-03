@@ -68,7 +68,7 @@ void setup()
   nh = new ros::NodeHandle();
   nh->getHardware()->setBaud(115200);
   nh->initNode();
-  //nh->advertise(pub);
+  nh->advertise(pub);
   nh->subscribe(sub);
 
   
