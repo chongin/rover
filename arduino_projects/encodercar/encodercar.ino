@@ -2,7 +2,8 @@
 #include <std_msgs/String.h>
 #include "motor_control.h"
 #include "servo_control.h"
-
+//#include "encoder.h"
+#include "test_car.h"
 
 
 ros::NodeHandle* nh;
@@ -13,10 +14,11 @@ std_msgs::String carInfoMsg;
 ros::Publisher pub("car_info", &carInfoMsg);
 
 
-void AddMessage(String* command, MotoInfo motoInfo, int angle)
+void PublishMessage(String command, MotoInfo motoInfo, int angle)
 {
-   String dd = *command + "," + String(motoInfo.left_speed) + "," + String(motoInfo.right_speed) + "," + String(servo_control->GetAngle());
-   carInfoMsg.data = dd.c_str();
+   char myString[50];
+   snprintf(myString, sizeof(myString), "%s,%d,%d,%d", command.c_str(), motoInfo.left_speed, motoInfo.right_speed, servo_control->GetAngle());
+   carInfoMsg.data = myString;
    pub.publish(&carInfoMsg);
 }
 
@@ -57,7 +59,7 @@ void controlMessageCb( const std_msgs::String& ctrlMsg){
     Serial.println(data);
   }
 
-  AddMessage(&data, moto_control->GetMotoInfo(), servo_control->GetAngle());
+  PublishMessage(data, moto_control->GetMotoInfo(), servo_control->GetAngle());
 }
 
 ros::Subscriber<std_msgs::String> sub("drive_car", controlMessageCb);
@@ -74,92 +76,17 @@ void setup()
   
   servo_control = new ServoControl();
   moto_control = new MotorControl();
+
+ // setup_encoder(nh);
 }
 
 void loop() 
 {
+ // publish_encoder_ticker();
   nh->spinOnce();
- 
-//  std_msgs::String ctrlMsg;
-//  ctrlMsg.data = "up";
-//  controlMessageCb(ctrlMsg);
-//  delay(2000);
-//  ctrlMsg.data = "down";
-//  controlMessageCb(ctrlMsg);
-//  delay(2000);
-//  test_car();
-  //test_servo();
-  delay(50);
-}
-
-void test_car()
-{
-//  for (int i = 0; i < 256; i++ )
-//  {
-//    moto_control->SetLeftSpeed(i);
-//    moto_control->ForwardLeft();
-//    delay(30);
-//  }
-//  
-//  moto_control->TurnOffLeft();
-//  delay(2000);
-//
-//  for (int i = 0; i < 256; i++ )
-//  {
-//    moto_control->SetLeftSpeed(i);
-//    moto_control->ForwardLeft();
-//    Serial.println(moto_control->GetMotoInfo().left_speed);
-//    delay(30);
-//  }
-//
-//  delay(2000);
-//  moto_control->TurnOffLeft();
-//  delay(2000);
-
-//  for (int i = 0; i < 256; i++ )
-//  {
-//    moto_control->SetRightSpeed(i);
-//    moto_control->ForwardRight();
-//    Serial.println(moto_control->GetMotoInfo().right_speed);
-//    delay(30);
-//  }
-//
-//   delay(2000);
-//   moto_control->TurnOffRight();
-//   delay(2000);
-   
-  //moto_control->SetRightSpeed(255);
-  //moto_control->BackwardRight();
-  //delay(2000);
-//  moto_control->TurnOffRight();
-//  delay(1000);
-//
-//  moto_control->Forward();
-//  delay(2000);
-//  moto_control->TurnOffAll();
-//  delay(1000);
-//  moto_control->Backward();
-//  delay(2000);
-//  moto_control->TurnOffAll();
-//  delay(1000);
-}
-
-void test_servo()
-{
-  //servo_control->SetServoAngle(0);
   
-  for (int i = 0; i < 180; ++i)
-  {
-    servo_control->IncreaseAngle();
-    delay(30);
-  }
-  Serial.println("Increase completed");
-  delay(1000);
-  for (int i = 0; i < 180; ++i)
-  {
-    servo_control->DecreaseAngle();
-    delay(30);
-  }
-  Serial.println("Decrease completed.");
-  delay(1000);
+  
+// test_car(moto_control);
+// test_servo(servo_control);
+  delay(50);
 }
