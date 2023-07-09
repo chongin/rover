@@ -22,9 +22,9 @@ public:
     {
       _angle = angle;
       myservo.write(angle);
-
-      Serial.print("Angle:");
-      Serial.println(_angle);
+//
+//      Serial.print("Angle:");
+//      Serial.println(_angle);
     }
   }
 

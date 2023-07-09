@@ -62,8 +62,8 @@ void MotorControl::SetLeftSpeed(int speed)
     _left_speed = speed;
     analogWrite(enB, speed);
 
-    Serial.print("Set Left speed:");
-    Serial.println(_left_speed);
+//    Serial.print("Set Left speed:");
+//    Serial.println(_left_speed);
   }
     
 }
@@ -75,8 +75,8 @@ void MotorControl::SetRightSpeed(int speed)
     _right_speed = speed;
     analogWrite(enA, speed);
 
-    Serial.print("Set Right speed:");
-    Serial.println(_right_speed);
+//    Serial.print("Set Right speed:");
+//    Serial.println(_right_speed);
   }
 }
 
@@ -85,7 +85,7 @@ void MotorControl::Forward()
   ForwardLeft();
   ForwardRight();
 
-  Serial.println("Forward All");
+//  Serial.println("Forward All");
 }
 
 void MotorControl::Backward()
@@ -93,14 +93,14 @@ void MotorControl::Backward()
   BackwardLeft();
   BackwardRight();
 
-  Serial.println("Backward all");
+//  Serial.println("Backward all");
 }
 
 void MotorControl::TurnOffAll()
 {
   TurnOffLeft();
   TurnOffRight();
-  Serial.println("Turn Off All");
+//  Serial.println("Turn Off All");
 }
 
 void MotorControl::ForwardLeft()
@@ -108,7 +108,7 @@ void MotorControl::ForwardLeft()
   digitalWrite(in3, LOW);
   digitalWrite(in4, HIGH);
   
-  Serial.println("Forward Left");
+//  Serial.println("Forward Left");
 }
 
 void MotorControl::BackwardLeft()
@@ -124,7 +124,7 @@ void MotorControl::ForwardRight()
   digitalWrite(in1, LOW);
   digitalWrite(in2, HIGH);
  
-  Serial.println("Forward Right");
+//  Serial.println("Forward Right");
 }
 
 void MotorControl::BackwardRight()
@@ -140,7 +140,7 @@ void MotorControl::TurnOffLeft()
   digitalWrite(in3, LOW);
   digitalWrite(in4, LOW);
 
-  Serial.println("Turn Off Left");
+//  Serial.println("Turn Off Left");
 }
 
 void MotorControl::TurnOffRight()
@@ -148,7 +148,7 @@ void MotorControl::TurnOffRight()
   digitalWrite(in1, LOW);
   digitalWrite(in2, LOW);
 
-  Serial.println("Turn Off Right");
+//  Serial.println("Turn Off Right");
 }
 
 void MotorControl::IncreaseLeftSpeed()
@@ -157,8 +157,7 @@ void MotorControl::IncreaseLeftSpeed()
   {
     _left_speed += 1;
     SetLeftSpeed(_left_speed);
-  }
-    
+  } 
 }
 
 void MotorControl::DecreaseLeftSpeed()
@@ -168,7 +167,6 @@ void MotorControl::DecreaseLeftSpeed()
      _left_speed -= 1;
      SetLeftSpeed(_left_speed);
   }
-   
 }
 
 void MotorControl::IncreaseRightSpeed()
@@ -178,7 +176,6 @@ void MotorControl::IncreaseRightSpeed()
     _right_speed += 1;
     SetRightSpeed(_right_speed);
   }
-    
 }
 
 void MotorControl::DecreaseRightSpeed()
