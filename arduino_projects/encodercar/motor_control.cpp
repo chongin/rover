@@ -5,7 +5,9 @@ const int MIN_SPEED = 50;
 MotorControl::MotorControl()
 {
   InitMotor();
-  ResetSpeed();
+  //ResetSpeed();
+  SetLeftSpeed(DEFAULT_SPEED);
+  SetRightSpeed(DEFAULT_SPEED + 20);
 }
 
 void MotorControl::ResetSpeed()

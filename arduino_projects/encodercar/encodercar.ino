@@ -3,7 +3,8 @@
 #include "servo_control.h"
 #include "encoder.h"
 #include "test_car.h"
-#include "keyboard_handler.h"
+#include "manual_drive_handler.h"
+#include "cmd_vel_control.h"
 
 
 GlobalObjects* globle_objects = nullptr;
@@ -12,8 +13,10 @@ void setup()
 {
   Serial.begin(115200);
   globle_objects = new GlobalObjects();
-  KeyboardHandler::GetInstance()->SetData(globle_objects->nh, globle_objects->moto_control, globle_objects->servo_control);
+  ManualDriveHandler::GetInstance()->SetData(globle_objects->nh, globle_objects->moto_control, globle_objects->servo_control);
   Encoder::GetInstance()->setup_encoder(globle_objects->nh);
+
+  //CmdVelControl::GetInstance();
 }
 
 void loop() 

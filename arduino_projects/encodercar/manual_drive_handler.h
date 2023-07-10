@@ -2,21 +2,21 @@
 #include <ros.h>
 #include <std_msgs/String.h>
 
-class KeyboardHandler
+class ManualDriveHandler
 {
 public:
-  static KeyboardHandler* GetInstance()
+  static ManualDriveHandler* GetInstance()
   {
     if (_instance == nullptr)
     {
-       _instance = new KeyboardHandler();
+       _instance = new ManualDriveHandler();
     }
     return _instance;
   }
   
   static void HandleControlMessageCb( const std_msgs::String& ctrlMsg)
   {
-    KeyboardHandler::GetInstance()->ControlMessageCb(ctrlMsg);
+    ManualDriveHandler::GetInstance()->ControlMessageCb(ctrlMsg);
   }
 
   void ControlMessageCb( const std_msgs::String& ctrlMsg)
@@ -88,7 +88,7 @@ public:
     return _servo_control;
   }
 private:
-  KeyboardHandler()
+  ManualDriveHandler()
   {
     _nh = nullptr;
     _moto_control = nullptr;
@@ -96,11 +96,11 @@ private:
 
     _car_info_msg = new std_msgs::String();
     _car_info_pub = new ros::Publisher("car_info", _car_info_msg);
-    _drive_car_sub = new ros::Subscriber<std_msgs::String>("drive_car", KeyboardHandler::HandleControlMessageCb);
+    _drive_car_sub = new ros::Subscriber<std_msgs::String>("drive_car", ManualDriveHandler::HandleControlMessageCb);
   }
 
 private:
-  static KeyboardHandler* _instance;
+  static ManualDriveHandler* _instance;
 
   ros::NodeHandle* _nh;
   MotorControl* _moto_control;
@@ -112,4 +112,4 @@ private:
   ros::Subscriber<std_msgs::String>* _drive_car_sub;
 };
 
-KeyboardHandler* KeyboardHandler::_instance = nullptr;
+ManualDriveHandler* ManualDriveHandler::_instance = nullptr;

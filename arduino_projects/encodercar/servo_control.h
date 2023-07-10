@@ -4,8 +4,10 @@
 
 #define servoPin 10
 
-const int DEFAULT_ANGLE = 100;
+const int DEFAULT_ANGLE = 90;
 const int ANGLE_STEP = 2;
+const int MIN_ANGLE = 56;
+const int MAX_ANGLE = 124;
 class ServoControl
 {
 public:
@@ -18,7 +20,7 @@ public:
 
   void SetServoAngle(int angle)
   {
-    if (angle >= 0 && angle <= 180)
+    if (angle >= MIN_ANGLE && angle <= MAX_ANGLE)
     {
       _angle = angle;
       myservo.write(angle);
@@ -41,17 +43,17 @@ public:
 
   void TurnLeft()
   {
-    SetServoAngle(0);
+    SetServoAngle(MIN_ANGLE);
   }
 
   void TurnRight()
   {
-    SetServoAngle(180);
+    SetServoAngle(MAX_ANGLE);
   }
   
   void IncreaseAngle()
   {
-    if (_angle < 180)
+    if (_angle < MAX_ANGLE)
     {
       _angle += ANGLE_STEP;
       SetServoAngle(_angle);
@@ -60,7 +62,7 @@ public:
 
   void DecreaseAngle()
   {
-    if (_angle > 0) 
+    if (_angle > MIN_ANGLE) 
     {
        _angle -= ANGLE_STEP;
        SetServoAngle(_angle);
