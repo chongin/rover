@@ -16,7 +16,7 @@ void setup()
   ManualDriveHandler::GetInstance()->SetData(globle_objects->nh, globle_objects->moto_control, globle_objects->servo_control);
   Encoder::GetInstance()->setup_encoder(globle_objects->nh);
 
-  //CmdVelControl::GetInstance();
+  CmdVelControl::GetInstance()->SetData(globle_objects->moto_control, globle_objects->servo_control);
 }
 
 void loop() 

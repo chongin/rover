@@ -1,3 +1,4 @@
+#pragma once
 #include <ros.h>
 #include <std_msgs/Int16.h>
 
@@ -126,6 +127,15 @@ public:
     }
   }
 
+  std_msgs::Int16* GetLeftWheelTick()
+  {
+    return left_wheel_tick_count;
+  }
+
+  std_msgs::Int16* GetRightWheelTick()
+  {
+    return right_wheel_tick_count;
+  }
 private:
   Encoder()
   {
