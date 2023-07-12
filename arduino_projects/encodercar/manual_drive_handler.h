@@ -1,6 +1,7 @@
 #pragma once
 #include <ros.h>
 #include <std_msgs/String.h>
+#include <geometry_msgs/Twist.h>
 
 class ManualDriveHandler
 {
@@ -18,37 +19,37 @@ public:
   {
     ManualDriveHandler::GetInstance()->ControlMessageCb(ctrlMsg);
   }
-
+ 
   void ControlMessageCb( const std_msgs::String& ctrlMsg)
   {
     const String& data = ctrlMsg.data;
     if (data[0] == 'W') {
-      GetMotorControl()->Forward();
+      _moto_control->Forward();
     } 
     else if (data[0] == 'S') {
-      GetMotorControl()->Backward();
+      _moto_control->Backward();
     } 
     else if (data[0] == 'A') {
-      GetServoControl()->DecreaseAngle();
+      _servo_control->DecreaseAngle();
     } 
     else if (data[0] == 'D') {
-      GetServoControl()->IncreaseAngle();
+      _servo_control->IncreaseAngle();
     }
     else if (data[0] == 'T') {
-      GetMotorControl()->TurnOffAll();
+      _moto_control->TurnOffAll();
     }
     else if (data[0] == 'Q')
     {
-      GetMotorControl()->IncreaseSpeed();
+      _moto_control->IncreaseSpeed();
     }
     else if (data[0] == 'E')
     {
-      GetMotorControl()->DecreaseSpeed();
+      _moto_control->DecreaseSpeed();
     }
     else if (data[0] == 'R')
     {
-      GetMotorControl()->ResetSpeed();
-      GetServoControl()->ResetAngle();
+      _moto_control->ResetSpeed();
+      _servo_control->ResetAngle();
     }
     else{
       Serial.print("Didn't recognize:");
@@ -56,8 +57,8 @@ public:
       return;
     }
   
-    PublishMessage(data, GetMotorControl()->GetMotoInfo(), 
-      GetServoControl()->GetAngle());
+    PublishMessage(data, _moto_control->GetMotoInfo(), 
+      _servo_control->GetAngle());
   }
   
   void SetData(ros::NodeHandle* nh, MotorControl* moto_control, ServoControl* servo_control)
@@ -78,15 +79,6 @@ public:
      _car_info_pub->publish(_car_info_msg);
   }
   
-  MotorControl* GetMotorControl()
-  {
-    return _moto_control;
-  }
-
-  ServoControl* GetServoControl()
-  {
-    return _servo_control;
-  }
 private:
   ManualDriveHandler()
   {

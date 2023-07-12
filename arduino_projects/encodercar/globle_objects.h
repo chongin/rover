@@ -15,12 +15,12 @@ public:
     nh->initNode();
 
     servo_control = new ServoControl();
-    moto_control = new MotorControl();
+    motor_control = new MotorControl();
   }
 
   
 public:
   ros::NodeHandle* nh;
-  MotorControl* moto_control;
+  MotorControl* motor_control;
   ServoControl* servo_control;
 };

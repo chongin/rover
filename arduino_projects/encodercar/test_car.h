@@ -2,28 +2,16 @@
 
 void test_car(MotorControl* moto_control)
 {
-  for (int i = 0; i < 256; i++ )
-  {
-    moto_control->SetLeftSpeed(i);
-    moto_control->ForwardLeft();
-    delay(30);
-  }
-  
-  moto_control->TurnOffLeft();
-  delay(2000);
-
-  for (int i = 0; i < 256; i++ )
-  {
-    moto_control->SetLeftSpeed(i);
-    moto_control->ForwardLeft();
-    Serial.println(moto_control->GetMotoInfo().left_speed);
-    delay(30);
-  }
-
-  delay(2000);
-  moto_control->TurnOffLeft();
-  delay(2000);
-
+  moto_control->SetLeftSpeed(100);
+  moto_control->ForwardLeft();
+  moto_control->SetRightSpeed(120);
+  moto_control->ForwardRight();
+    return;
+  moto_control->SetLeftSpeed(10);
+  moto_control->ForwardLeft();
+  Serial.println(moto_control->GetMotoInfo().left_speed);
+ // delay(30);
+  return;
   for (int i = 0; i < 256; i++ )
   {
     moto_control->SetRightSpeed(i);

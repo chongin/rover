@@ -1,13 +1,18 @@
 #include "motor_control.h"
 
-const int DEFAULT_SPEED = 150;
-const int MIN_SPEED = 50;
+//const int DEFAULT_SPEED = 120;
+const int DEFAULT_SPEED = 0;
+const int MIN_SPEED = 0;
+const int MAX_SPEED = 255;
+const int MOTO_INCREAMENT = 1;
 MotorControl::MotorControl()
 {
+  _left_speed = 0;
+  _right_speed = 0;
   InitMotor();
-  //ResetSpeed();
-  SetLeftSpeed(DEFAULT_SPEED);
-  SetRightSpeed(DEFAULT_SPEED + 20);
+  ResetSpeed();
+//  SetLeftSpeed(DEFAULT_SPEED);
+//  SetRightSpeed(DEFAULT_SPEED + 20);
 }
 
 void MotorControl::ResetSpeed()
@@ -39,6 +44,16 @@ void MotorControl::InitMotor()
   digitalWrite(in4, LOW);
 }
 
+int MotorControl::GetMinSpeed()
+{
+  return MIN_SPEED;
+}
+
+int MotorControl::GetMaxSpeed()
+{
+  return MAX_SPEED;
+}
+
 void MotorControl::SetSpeed(int speed)
 {
   SetLeftSpeed(speed);
@@ -59,132 +74,115 @@ void MotorControl::DecreaseSpeed()
   
 void MotorControl::SetLeftSpeed(int speed)
 {
-  if (speed > MIN_SPEED && speed < 256)
+  if (speed >= MIN_SPEED && speed <= MAX_SPEED)
   {
     _left_speed = speed;
     analogWrite(enB, speed);
-
-//    Serial.print("Set Left speed:");
-//    Serial.println(_left_speed);
   }
-    
+  
+  Serial.print("SetLeftSpeed:");
+  Serial.println(speed);
 }
 
 void MotorControl::SetRightSpeed(int speed)
 {
-  if (speed > MIN_SPEED && speed < 256)
+  if (speed >= MIN_SPEED && speed <= MAX_SPEED)
   {
     _right_speed = speed;
     analogWrite(enA, speed);
-
-//    Serial.print("Set Right speed:");
-//    Serial.println(_right_speed);
   }
+  
+  Serial.print("SetRightSpeed:");
+  Serial.println(speed);
 }
 
 void MotorControl::Forward()
 {
   ForwardLeft();
   ForwardRight();
-
-//  Serial.println("Forward All");
+  Serial.println("Forward");
 }
 
 void MotorControl::Backward()
 {
   BackwardLeft();
   BackwardRight();
-
-//  Serial.println("Backward all");
 }
 
 void MotorControl::TurnOffAll()
 {
   TurnOffLeft();
   TurnOffRight();
-//  Serial.println("Turn Off All");
 }
 
 void MotorControl::ForwardLeft()
 {
   digitalWrite(in3, LOW);
   digitalWrite(in4, HIGH);
-  
-//  Serial.println("Forward Left");
 }
 
 void MotorControl::BackwardLeft()
 {
   digitalWrite(in3, HIGH);
   digitalWrite(in4, LOW);
-  
-  Serial.println("Backward Left");
 }
 
 void MotorControl::ForwardRight()
 {
   digitalWrite(in1, LOW);
   digitalWrite(in2, HIGH);
- 
-//  Serial.println("Forward Right");
 }
 
 void MotorControl::BackwardRight()
 { 
   digitalWrite(in1, HIGH);
   digitalWrite(in2, LOW);
-  
-  Serial.println("Backward Right");
 }
 
 void MotorControl::TurnOffLeft()
 {
   digitalWrite(in3, LOW);
   digitalWrite(in4, LOW);
-
-//  Serial.println("Turn Off Left");
 }
 
 void MotorControl::TurnOffRight()
 {
   digitalWrite(in1, LOW);
   digitalWrite(in2, LOW);
-
-//  Serial.println("Turn Off Right");
 }
 
 void MotorControl::IncreaseLeftSpeed()
 {
-  if (_left_speed < 255)
+  if (_left_speed < MAX_SPEED)
   {
-    _left_speed += 1;
+    _left_speed += MOTO_INCREAMENT;
     SetLeftSpeed(_left_speed);
   } 
 }
 
 void MotorControl::DecreaseLeftSpeed()
 {
-  if (_left_speed > 0)
+  if (_left_speed > MIN_SPEED)
   {
-     _left_speed -= 1;
+     _left_speed -= MOTO_INCREAMENT;
      SetLeftSpeed(_left_speed);
   }
 }
 
 void MotorControl::IncreaseRightSpeed()
 {
-  if (_right_speed < 255)
+  if (_right_speed < MAX_SPEED)
   {
-    _right_speed += 1;
+    _right_speed += MOTO_INCREAMENT;
     SetRightSpeed(_right_speed);
   }
 }
 
 void MotorControl::DecreaseRightSpeed()
 {
-  if (_right_speed > 0)
+  if (_right_speed > MIN_SPEED)
   {
-    _right_speed -= 1;
+    _right_speed -= MOTO_INCREAMENT;
     SetRightSpeed(_right_speed);
   }
 }

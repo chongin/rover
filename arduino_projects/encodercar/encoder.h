@@ -122,8 +122,13 @@ public:
        
       previousMillis = currentMillis;
        
-      rightPub->publish( right_wheel_tick_count );
-      leftPub->publish( left_wheel_tick_count );
+      rightPub->publish( right_wheel_tick_count);
+      leftPub->publish( left_wheel_tick_count);
+
+//      Serial.print("Right:");
+//      Serial.print(right_wheel_tick_count->data);
+//      Serial.print(",Left:");
+//      Serial.println(left_wheel_tick_count->data);
     }
   }
 

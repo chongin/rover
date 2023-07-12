@@ -26,6 +26,19 @@ public:
   
   void SetLeftSpeed(int speed);
   void SetRightSpeed(int speed);
+
+  int GetLeftSpeed()
+  {
+    return _left_speed;
+  }
+
+  int GetRightSpeed()
+  {
+    return _right_speed;
+  }
+
+  int GetMinSpeed();
+  int GetMaxSpeed();
   
   void ForwardLeft();
   void ForwardRight();
