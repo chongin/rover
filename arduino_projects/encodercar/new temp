@@ -1,0 +1,121 @@
+#pragma once
+
+#include <ros.h>
+#include <std_msgs/String.h>
+#include <geometry_msgs/Twist.h>
+#include <cmath>
+
+class CmdVelControl {
+public:
+  CmdVelControl(ros::NodeHandle* nh, MotorControl* moto_control, ServoControl* servo_control) :
+    _nh(nh), _motor(moto_control), _servo(servo_control) {
+    subCmdVel = new ros::Subscriber<geometry_msgs::Twist>("cmd_vel", &CmdVelControl::HandleCalcPwmValues, this);
+  }
+
+  void HandleCalcPwmValues(const geometry_msgs::Twist& cmdVel) {
+    CalcPwmValues(cmdVel);
+  }
+
+  void SetPwmValues() {
+    _servo->SetServoAngle(_ros_angle);
+
+    if (_ros_speed == 0) {
+      _motor->SetSpeed(0);
+      _motor->TurnOffAll();
+    } else {
+      _motor->SetLeftSpeed(_ros_speed);
+      if (_motor->GetRightSpeed() == 0) {
+        _motor->SetRightSpeed(_ros_speed);
+      }
+
+      if (_forward) {
+        _motor->Forward();
+      } else {
+        _motor->Backward();
+      }
+
+      if (_go_straight) {
+        DriveStraight();
+      }
+    }
+  }
+
+private:
+  ros::NodeHandle* _nh;
+  MotorControl* _motor;
+  ServoControl* _servo;
+
+  ros::Subscriber<geometry_msgs::Twist>* subCmdVel;
+
+  int prevLeftCount = 0;
+  int prevRightCount = 0;
+
+  int _ros_speed = 0;
+  int _ros_angle = 0;
+  bool _go_straight = false;
+  bool _forward = true;
+
+  void DriveStraight() {
+    int offset = 2;
+    int leftCount = Encoder::GetInstance()->GetLeftWheelTick()->data;
+    int rightCount = Encoder::GetInstance()->GetRightWheelTick()->data;
+    int rightPower = _motor->GetRightSpeed();
+    if (leftCount > rightCount) {
+      rightPower += offset;
+    } else if (leftCount < rightCount) {
+      rightPower -= offset;
+    }
+
+    _motor->SetRightSpeed(rightPower);
+  }
+
+  void CalcPwmValues(const geometry_msgs::Twist& cmdVel) {
+    _ros_speed = CalcSpeedByLinear(cmdVel.linear.x);
+    _ros_angle = CaclAngleByLinear(cmdVel.angular.z);
+
+    if (cmdVel.angular.z != 0.0) {
+      _go_straight = false;
+    } else {
+      _go_straight = true;
+    }
+
+    // Adjust right wheel speed to match the left wheel speed
+    int leftCount = Encoder::GetInstance()->GetLeftWheelTick()->data;
+    int rightCount = Encoder::GetInstance()->GetRightWheelTick()->data;
+
+    if (leftCount > rightCount) {
+      _ros_speed -= std::abs(leftCount - rightCount);
+    } else if (leftCount < rightCount) {
+      _ros_speed += std::abs(leftCount - rightCount);
+    }
+  }
+
+  int CalcSpeedByLinear(float linear) {
+    float max_linear_value = 0.22;
+    int current_speed = 0;
+    if (std::abs(linear) > 0) {
+      _forward = linear > 0;
+      float percentage = std::abs(linear) / max_linear_value;
+      current_speed = _motor->GetMaxSpeed() * percentage;
+    } else {
+      current_speed = 0;
+    }
+    return current_speed;
+  }
+
+  int CaclAngleByLinear(float linear) {
+    float max_linear_value = 2.28;
+    float percentage = std::abs(linear) / max_linear_value;
+
+    int current_angle = 0;
+    int center_angle = 90;
+    if (linear > 0) {
+      current_angle = _servo->GetMinAngle() + (center_angle - _servo->GetMinAngle()) * percentage;
+    } else if (linear < 0) {
+      current_angle = _servo->GetMaxAngle() - (_servo->GetMaxAngle() - center_angle) * percentage;
+    } else {
+      current_angle = center_angle;
+    }
+    return current_angle;
+  }
+};
