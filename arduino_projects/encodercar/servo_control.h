@@ -5,7 +5,7 @@
 #define servoPin 10
 
 const int DEFAULT_ANGLE = 90;
-const int ANGLE_INCREAMENT = 2;
+const int ANGLE_INCREAMENT = 1;
 const int MIN_ANGLE = 56;
 const int MAX_ANGLE = 124;
 class ServoControl
@@ -24,9 +24,6 @@ public:
     {
       _angle = angle;
       myservo.write(angle);
-//
-//      Serial.print("Angle:");
-//      Serial.println(_angle);
     }
   }
 

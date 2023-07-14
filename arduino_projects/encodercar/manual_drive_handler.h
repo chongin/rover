@@ -67,7 +67,7 @@ public:
     _moto_control = moto_control;
     _servo_control = servo_control;
 
-    _nh->advertise(*_car_info_pub);
+    _nh->advertise(*_drive_info_pub);
     _nh->subscribe(*_drive_car_sub);
   }
 
@@ -75,8 +75,8 @@ public:
   {
      char myString[50];
      snprintf(myString, sizeof(myString), "%s,%d,%d,%d", command.c_str(), motoInfo.left_speed, motoInfo.right_speed, angle);
-     _car_info_msg->data = myString;
-     _car_info_pub->publish(_car_info_msg);
+     _drive_info_msg->data = myString;
+     _drive_info_pub->publish(_drive_info_msg);
   }
   
 private:
@@ -86,8 +86,8 @@ private:
     _moto_control = nullptr;
     _servo_control = nullptr;
 
-    _car_info_msg = new std_msgs::String();
-    _car_info_pub = new ros::Publisher("car_info", _car_info_msg);
+    _drive_info_msg = new std_msgs::String();
+    _drive_info_pub = new ros::Publisher("drive_info", _drive_info_msg);
     _drive_car_sub = new ros::Subscriber<std_msgs::String>("drive_car", ManualDriveHandler::HandleControlMessageCb);
   }
 
@@ -98,8 +98,8 @@ private:
   MotorControl* _moto_control;
   ServoControl* _servo_control;
 
-  std_msgs::String* _car_info_msg;
-  ros::Publisher* _car_info_pub;
+  std_msgs::String* _drive_info_msg;
+  ros::Publisher* _drive_info_pub;
 
   ros::Subscriber<std_msgs::String>* _drive_car_sub;
 };

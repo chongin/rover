@@ -23,6 +23,7 @@ void loop()
 {
   Encoder::GetInstance()->publish_encoder_ticker();
   CmdVelControl::GetInstance()->SetPwmValues();
+  CmdVelControl::GetInstance()->PublishCarInfo();
   globle_objects->nh->spinOnce();
   
   

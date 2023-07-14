@@ -79,9 +79,6 @@ void MotorControl::SetLeftSpeed(int speed)
     _left_speed = speed;
     analogWrite(enB, speed);
   }
-  
-  Serial.print("SetLeftSpeed:");
-  Serial.println(speed);
 }
 
 void MotorControl::SetRightSpeed(int speed)
@@ -91,16 +88,12 @@ void MotorControl::SetRightSpeed(int speed)
     _right_speed = speed;
     analogWrite(enA, speed);
   }
-  
-  Serial.print("SetRightSpeed:");
-  Serial.println(speed);
 }
 
 void MotorControl::Forward()
 {
   ForwardLeft();
   ForwardRight();
-  Serial.println("Forward");
 }
 
 void MotorControl::Backward()

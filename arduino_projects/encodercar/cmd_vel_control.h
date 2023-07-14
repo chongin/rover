@@ -26,8 +26,8 @@ public:
     _motor = moto_control;
     _servo = servo_control;
 
-
-    _nh->subscribe(*subCmdVel);
+    _nh->advertise(*_car_info_pub);
+    _nh->subscribe(*_sub_cmd_vel);
   }
 
    void DriveStraight()
@@ -55,19 +55,30 @@ public:
 //    _motor->SetRightSpeed(rightPower);
 
     int offset = 2;
-    int leftCount = Encoder::GetInstance()->GetLeftWheelTick()->data;
-    int rightCount = Encoder::GetInstance()->GetRightWheelTick()->data;
-    int rightPower = _motor->GetRightSpeed();
-    if (leftCount > rightCount)
+    int left_count = Encoder::GetInstance()->GetLeftWheelTick()->data;
+    int right_count = Encoder::GetInstance()->GetRightWheelTick()->data;
+    int left_speed = _motor->GetLeftSpeed();
+    if (right_count > left_count)
     {
-      rightPower += offset;
+      if (left_speed - _motor->GetRightSpeed() < 30)
+      {
+        left_speed += offset;
+      }
+      
     }
-    else if (leftCount < rightCount)
+    else if (right_count < left_count)
     {
-      rightPower -= offset;
+      if (_motor->GetRightSpeed() - left_speed < 30)
+      {
+        left_speed -= offset;
+      }
+    }
+    else {
+      left_speed = _motor->GetRightSpeed();
     }
 
-    _motor->SetRightSpeed(rightPower);
+
+    _motor->SetLeftSpeed(left_speed);
   }
 
   // Take the velocity command as input and calculate the PWM values.
@@ -76,10 +87,6 @@ public:
     _ros_speed = CalcSpeedByLinear(cmdVel.linear.x);
     _ros_angle = CaclAngleByLinear(cmdVel.angular.z);
 
-    Serial.print("ros_speed:");
-    Serial.print(_ros_speed);
-    Serial.print("ros_angle:");
-    Serial.println(_ros_angle);
     if (cmdVel.angular.z != 0.0) {
       _go_straight = false;
     }
@@ -98,10 +105,10 @@ public:
       _motor->TurnOffAll();
     }
     else {
-      _motor->SetLeftSpeed(_ros_speed);
-      if (_motor->GetRightSpeed() == 0)
+      _motor->SetRightSpeed(_ros_speed); //right side is slower than left side
+      if (_motor->GetLeftSpeed() == 0)
       {
-        _motor->SetRightSpeed(_ros_speed);
+        _motor->SetLeftSpeed(_ros_speed);
       }
 
       if (_forward)
@@ -119,6 +126,28 @@ public:
     }
   }
 
+  void PublishCarInfo()
+  {
+     // Record the time
+    currentMillis = millis();
+   
+    // If 100ms have passed, print the number of ticks
+    if (currentMillis - previousMillis > interval) {
+       
+      previousMillis = currentMillis;
+       
+       char myString[50];
+       snprintf(myString, sizeof(myString), "%d,%d,%d,%d,%d", 
+        Encoder::GetInstance()->GetLeftWheelTick()->data,
+        Encoder::GetInstance()->GetRightWheelTick()->data,
+        _motor->GetLeftSpeed(), _motor->GetRightSpeed(), _servo->GetAngle()
+       );
+        
+       _car_info_msg->data = myString;
+       _car_info_pub->publish(_car_info_msg);
+    }
+  }
+  
   int CalcSpeedByLinear(float linear)
   {
     //float step = 0.01;
@@ -146,11 +175,11 @@ public:
     int center_angle = 90;
     if (linear > 0) //turn left
     {
-      current_angle = _servo->GetMinAngle() + (center_angle - _servo->GetMinAngle()) * percentage;
+      current_angle = center_angle - (center_angle - _servo->GetMinAngle()) * percentage;
     }
     else if (linear < 0)//turn right
     {
-      current_angle = _servo->GetMaxAngle() - (_servo->GetMaxAngle() - center_angle) * percentage;
+      current_angle = center_angle + (_servo->GetMaxAngle() - center_angle) * percentage;
     }
     else {
       current_angle = center_angle;
@@ -164,7 +193,9 @@ private:
     _motor = nullptr;
     _servo = nullptr;
 
-    subCmdVel = new ros::Subscriber<geometry_msgs::Twist>("cmd_vel", CmdVelControl::HandleCalcPwmValues);
+    _car_info_msg = new std_msgs::String();
+    _sub_cmd_vel = new ros::Subscriber<geometry_msgs::Twist>("cmd_vel", CmdVelControl::HandleCalcPwmValues);
+    _car_info_pub = new ros::Publisher("car_info", _car_info_msg);
   }
 
 private:
@@ -174,8 +205,10 @@ private:
   MotorControl* _motor;
   ServoControl* _servo;
 
-  ros::Subscriber<geometry_msgs::Twist>* subCmdVel;
-
+  ros::Subscriber<geometry_msgs::Twist>* _sub_cmd_vel;
+   std_msgs::String* _car_info_msg;
+  ros::Publisher* _car_info_pub;
+  
   int prevLeftCount = 0;
   int prevRightCount = 0;
 
@@ -183,6 +216,11 @@ private:
   int _ros_angle = 0;
   bool _go_straight = false;
   bool _forward = true;
+
+  // 100ms interval for measurements
+  const int interval = 100;
+  long previousMillis = 0;
+  long currentMillis = 0;
 };
 
 CmdVelControl* CmdVelControl::_instance = nullptr;
